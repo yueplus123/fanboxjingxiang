@@ -1,0 +1,24 @@
+<!doctype html><meta charset="utf-8">
+<form id="A"><!-- 标准 autocomplete -->
+  <input autocomplete="cc-name" name="a1">
+  <input autocomplete="cc-number" name="a2">
+  <input autocomplete="cc-exp" name="a3">
+  <input autocomplete="cc-csc" name="a4">
+</form>
+<form id="B" hidden><!-- 日文标签 + 月/年下拉 -->
+  <label for="b1">カード番号</label><input id="b1">
+  <label for="b2">有効期限(月)</label>
+  <select id="b2"><option value="">--</option><option value="1">01</option><option value="12">12</option></select>
+  <label for="b3">有効期限(年)</label>
+  <select id="b3"><option value="">--</option><option value="2029">2029</option><option value="2030">2030</option></select>
+  <label for="b4">セキュリティコード</label><input id="b4" maxlength="4">
+  <label for="b5">カード名義</label><input id="b5">
+</form>
+<form id="C" hidden><!-- placeholder 识别 + 4 位有效期 -->
+  <input placeholder="Card number">
+  <input placeholder="MM/YY" maxlength="4">
+  <input placeholder="CVC">
+</form>
+<form id="D" hidden><!-- 找不到的情况：无任何特征 -->
+  <input name="x1"><input name="x2">
+</form>

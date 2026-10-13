@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>pictSPACE 批量购买</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,600;0,9..40,700;1,9..40,400&family=Syne:wght@600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/styles.css?v=20260913a" />
+</head>
+<body>
+  <div class="bg"></div>
+  <main class="shell">
+    <header class="hero">
+      <div class="hero-top">
+        <div>
+          <p class="brand">pictSPACE</p>
+          <h1>跨店铺批量购买</h1>
+        </div>
+        <div class="hero-actions">
+          <button type="button" class="ghost" id="btn-settings" title="邮箱与下单设置">邮箱设置</button>
+          <button type="button" class="ghost danger-ghost" id="btn-reset" title="清除本地流程缓存并回到首页">
+            清除缓存回首页
+          </button>
+        </div>
+      </div>
+      <p class="lede" id="main-lede">按流程逐步完成。须完成当前步才能进入下一步；邮箱请在右上角「邮箱设置」配置。</p>
+    </header>
+
+    <!-- 主流程 -->
+    <div id="view-main">
+      <nav class="stepper" aria-label="流程进度">
+        <div class="stepper-track">
+          <div class="stepper-item is-active" data-step="1">
+            <div class="stepper-node" aria-hidden="true">1</div>
+            <div class="stepper-text">添加商品</div>
+          </div>
+          <div class="stepper-item is-locked" data-step="2">
+            <div class="stepper-node" aria-hidden="true">2</div>
+            <div class="stepper-text">加购下单</div>
+          </div>
+          <div class="stepper-item is-locked" data-step="3">
+            <div class="stepper-node" aria-hidden="true">3</div>
+            <div class="stepper-text">日志</div>
+          </div>
+          <div class="stepper-item is-locked" data-step="4">
+            <div class="stepper-node" aria-hidden="true">4</div>
+            <div class="stepper-text">支付链接</div>
+          </div>
+          <div class="stepper-item is-locked" data-step="5">
+            <div class="stepper-node" aria-hidden="true">5</div>
+            <div class="stepper-text">订单链接</div>
+          </div>
+        </div>
+      </nav>
+
+      <!-- 页面一：添加商品 -->
+      <div class="step-page is-on" id="page-1">
+        <section class="panel">
+          <div class="panel-head">
+            <h2>添加商品链接</h2>
+            <button type="button" class="ghost" id="btn-paste">从剪贴板粘贴</button>
+          </div>
+          <textarea id="urls" rows="12" placeholder="每行一个链接，例如：&#10;https://pictspace.net/items/detail/748695"></textarea>
+          <div class="actions">
+            <button type="button" class="primary" id="btn-analyze">解析链接</button>
+          </div>
+          <p class="hint" id="analyze-hint">解析成功后将进入下一步「加购下单」。邮箱未配置时可先点右上角「邮箱设置」。</p>
+        </section>
+      </div>
+
+      <!-- 页面二：展示商品 + 开始加购 -->
+      <div class="step-page" id="page-2" hidden>
+        <section class="panel">
+          <div class="panel-head">
+            <h2>解析后的商品（按店铺）</h2>
+            <span class="meta" id="groups-meta">—</span>
+          </div>
+          <div id="groups" class="groups">
+            <p class="empty">暂无商品。</p>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <h2>添加购物车 / 游客下单</h2>
+          </div>
+          <p class="hint">确认商品无误后开始。系统会逐店加购、仮注文并读取支付链接，过程请在「日志」页查看。</p>
+          <div class="actions">
+            <button type="button" class="ghost" id="btn-back-1">← 返回修改链接</button>
+            <button type="button" class="accent" id="btn-start">开始加购下单</button>
+          </div>
+          <p class="hint" id="start-hint"></p>
+        </section>
+      </div>
+
+      <!-- 页面三：日志 -->
+      <div class="step-page" id="page-3" hidden>
+        <section class="panel" id="job-section">
+          <div class="panel-head">
+            <h2>执行日志</h2>
+            <span class="badge" id="job-badge">idle</span>
+          </div>
+          <p class="status-line" id="job-status">任务运行中…</p>
+          <div class="actions">
+            <a class="link-btn" id="cart-link" href="#" target="_blank" rel="noopener" hidden>打开当前页链接</a>
+            <button type="button" class="accent" id="btn-continue" hidden>跳过 / 继续</button>
+            <button type="button" class="danger" id="btn-cancel" hidden>取消任务</button>
+          </div>
+          <pre class="log log-tall" id="job-log">（等待任务…）</pre>
+          <p class="hint">全部店铺处理完成后，将自动进入「支付链接」页。</p>
+        </section>
+      </div>
+
+      <!-- 页面四：支付链接 -->
+      <div class="step-page" id="page-4" hidden>
+        <section class="panel" id="links-section">
+          <div class="panel-head">
+            <h2>支付链接</h2>
+            <span class="meta" id="links-meta">0</span>
+          </div>
+          <p class="hint">点击「打开支付」完成付款。全部付完后点下方按钮进入订单页。</p>
+          <div id="pay-links" class="pay-links">
+            <p class="empty">暂无支付链接。</p>
+          </div>
+          <div class="actions">
+            <button type="button" class="primary" id="btn-to-orders" disabled>我已支付，提取订单链接 →</button>
+          </div>
+        </section>
+      </div>
+
+      <!-- 页面五：订单链接 -->
+      <div class="step-page" id="page-5" hidden>
+        <section class="panel" id="dl-section">
+          <div class="panel-head">
+            <h2>订单链接</h2>
+            <span class="meta" id="dl-meta">0</span>
+          </div>
+          <p class="hint" id="dl-auto-hint">进入本页后将自动读邮箱提取订单链接，无需点击。</p>
+          <div class="actions" style="margin-top:0.35rem;margin-bottom:0.75rem">
+            <button type="button" class="ghost" id="btn-scan-dl">立即重新读取</button>
+          </div>
+          <div id="dl-links" class="pay-links">
+            <p class="empty">正在等待支付完成邮件中的订单链接…</p>
+          </div>
+          <p class="hint" id="dl-hint">只保留邮件里的「注文详情 / orders/detail」链接。</p>
+        </section>
+      </div>
+
+      <footer class="foot">
+        中断时可点右上角「清除缓存回首页」。邮箱设置与授权码会保留。
+      </footer>
+    </div>
+
+    <!-- 设置页：邮箱 / IMAP -->
+    <div id="view-settings" class="view-settings" hidden>
+      <section class="panel settings-panel">
+        <div class="panel-head">
+          <h2>邮箱设置</h2>
+          <button type="button" class="ghost" id="btn-settings-back">← 返回流程</button>
+        </div>
+        <p class="hint settings-intro">用于游客下单收信、读取支付与订单链接。授权码保存在本机，不会出现在主流程页。</p>
+
+        <label class="check settings-check">
+          <input type="checkbox" id="auto-temp" checked />
+          自动提交仮注文
+        </label>
+
+        <div class="grid-form">
+          <label>邮箱
+            <input id="guest-email" type="email" value="" autocomplete="email" />
+          </label>
+          <label>QQ 邮箱授权码（不是 QQ 密码）
+            <input id="imap-code" type="password" placeholder="在 QQ 邮箱设置里生成授权码" autocomplete="off" />
+          </label>
+        </div>
+        <div class="actions">
+          <button type="button" class="ghost" id="btn-imap-test">测试读信</button>
+          <button type="button" class="primary" id="btn-imap-save">保存授权码</button>
+        </div>
+        <p class="hint" id="imap-hint">请填写邮箱与授权码后保存。</p>
+      </section>
+    </div>
+  </main>
+  <script src="/static/app.js?v=20260914c"></script>
+</body>
+</html>

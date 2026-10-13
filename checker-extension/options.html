@@ -1,0 +1,14 @@
+<!doctype html>
+<meta charset="utf-8" />
+<title>作者检测插件设置</title>
+<body style="font: 14px system-ui; max-width: 460px; margin: 24px">
+  <h3>本地服务地址</h3>
+  <input id="api" style="width: 100%; padding: 6px" placeholder="http://127.0.0.1:8787" />
+  <h3>插件密钥</h3>
+  <input id="key" style="width: 100%; padding: 6px" placeholder="从 server/data/ext.key 复制" autocomplete="off" />
+  <p style="color: #666; font-size: 12px">
+    密钥只能用来查询“某个作者有没有被赞助”，不能登录后台，也读不到卡信息。
+  </p>
+  <p><button id="save">保存</button> <button id="test">测试连接</button> <span id="msg"></span></p>
+  <script src="options.js"></script>
+</body>

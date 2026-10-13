@@ -1,0 +1,13 @@
+{
+  "name": "fanbox-sponsor-server",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch --experimental-sqlite src/index.js",
+    "start": "node src/index.js"
+  },
+  "dependencies": {
+    "@hono/node-server": "^2.1.3",
+    "hono": "^4.13.13"
+  }
+}

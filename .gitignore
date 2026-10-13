@@ -1,0 +1,15 @@
+node_modules/
+dist/
+server/data/
+*.key
+*.db
+.env
+
+modules/**/config.local.json
+modules/**/job_state.json
+modules/**/usage_stats.json
+modules/**/__pycache__/
+modules/**/.venv/
+
+*.pem
+*.crx
